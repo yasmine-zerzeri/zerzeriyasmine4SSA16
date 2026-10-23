@@ -1,0 +1,54 @@
+### Créer un véhicule (1)
+POST http://localhost:8080/vehicules
+Content-Type: application/json
+
+{
+  "immatriculation": "123 TUN 4567",
+  "marque": "Renault",
+  "modele": "Clio",
+  "categorie": "CITADINE",
+  "tarifJournalier": 80.0,
+  "statut": "DISPONIBLE"
+}
+
+### Créer un véhicule (2)
+POST http://localhost:8080/vehicules
+Content-Type: application/json
+
+{
+  "immatriculation": "205 TUN 8812",
+  "marque": "Peugeot",
+  "modele": "508",
+  "categorie": "BERLINE",
+  "tarifJournalier": 150.0,
+  "statut": "LOUE"
+}
+
+### Créer un véhicule (3)
+POST http://localhost:8080/vehicules
+Content-Type: application/json
+
+{
+  "immatriculation": "198 TUN 3341",
+  "marque": "Hyundai",
+  "modele": "Tucson",
+  "categorie": "SUV",
+  "tarifJournalier": 190.5,
+  "statut": "DISPONIBLE"
+}
+
+### Créer un véhicule (4)
+POST http://localhost:8080/vehicules
+Content-Type: application/json
+
+{
+  "immatriculation": "240 TUN 9027",
+  "marque": "Fiat",
+  "modele": "Doblo",
+  "categorie": "UTILITAIRE",
+  "tarifJournalier": 120.0,
+  "statut": "MAINTENANCE"
+}
+
+### Lister tous les véhicules
+GET http://localhost:8080/vehicules
