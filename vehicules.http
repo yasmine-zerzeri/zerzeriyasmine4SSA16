@@ -1,5 +1,5 @@
 ### Créer un véhicule (1)
-POST http://localhost:8080/vehicules
+POST http://localhost:8089/api/vehicules
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ### Créer un véhicule (2)
-POST http://localhost:8080/vehicules
+POST http://localhost:8089/api/vehicules
 Content-Type: application/json
 
 {
@@ -24,31 +24,24 @@ Content-Type: application/json
   "statut": "LOUE"
 }
 
-### Créer un véhicule (3)
-POST http://localhost:8080/vehicules
-Content-Type: application/json
-
-{
-  "immatriculation": "198 TUN 3341",
-  "marque": "Hyundai",
-  "modele": "Tucson",
-  "categorie": "SUV",
-  "tarifJournalier": 190.5,
-  "statut": "DISPONIBLE"
-}
-
-### Créer un véhicule (4)
-POST http://localhost:8080/vehicules
-Content-Type: application/json
-
-{
-  "immatriculation": "240 TUN 9027",
-  "marque": "Fiat",
-  "modele": "Doblo",
-  "categorie": "UTILITAIRE",
-  "tarifJournalier": 120.0,
-  "statut": "MAINTENANCE"
-}
-
 ### Lister tous les véhicules
-GET http://localhost:8080/vehicules
+GET http://localhost:8089/api/vehicules
+
+### Consulter un véhicule
+GET http://localhost:8089/api/vehicules/1
+
+### Modifier un véhicule
+PUT http://localhost:8089/api/vehicules/1
+Content-Type: application/json
+
+{
+  "immatriculation": "123 TUN 4567",
+  "marque": "Renault",
+  "modele": "Clio",
+  "categorie": "CITADINE",
+  "tarifJournalier": 95.0,
+  "statut": "LOUE"
+}
+
+### Supprimer un véhicule
+DELETE http://localhost:8089/api/vehicules/1

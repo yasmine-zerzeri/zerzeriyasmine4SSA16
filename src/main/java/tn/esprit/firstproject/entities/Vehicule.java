@@ -1,9 +1,12 @@
 package tn.esprit.firstproject.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -27,10 +30,10 @@ public class Vehicule {
     @Enumerated(EnumType.STRING)
     private StatutVehicule statut;
 
+    @JsonBackReference("agence-vehicules")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agence_id")
     private Agence agence;
-
 
     @ManyToMany
     @JoinTable(
@@ -40,7 +43,7 @@ public class Vehicule {
     )
     private Set<Equipement> equipements;
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "vehicule")
     private Set<Reservation> reservations;
 
