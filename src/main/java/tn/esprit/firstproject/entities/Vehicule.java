@@ -2,6 +2,7 @@ package tn.esprit.firstproject.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -35,7 +36,7 @@ public class Vehicule {
     @JoinColumn(name = "agence_id")
     private Agence agence;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "vehicule_equipement",
             joinColumns = @JoinColumn(name = "vehicule_id"),
@@ -46,5 +47,10 @@ public class Vehicule {
     @JsonIgnore
     @OneToMany(mappedBy = "vehicule")
     private Set<Reservation> reservations;
+
+    @JsonProperty(value = "agenceId", access = JsonProperty.Access.READ_ONLY)
+    public Long getAgenceId() {
+        return agence != null ? agence.getIdAgence() : null;
+    }
 
 }

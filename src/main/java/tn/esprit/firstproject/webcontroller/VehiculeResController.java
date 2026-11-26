@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tn.esprit.firstproject.entities.Vehicule;
 import tn.esprit.firstproject.service.IVehiculeService;
+import tn.esprit.firstproject.webcontroller.dto.vehiculeDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
@@ -28,25 +30,25 @@ public class VehiculeResController {
     private final IVehiculeService vehiculeService;
 
     @PostMapping
-    public ResponseEntity<Vehicule> createVehicule(@RequestBody Vehicule vehicule) {
+    public ResponseEntity<vehiculeDTO> createVehicule(@RequestBody Vehicule vehicule) {
         Vehicule createdVehicule = vehiculeService.addVehicule(vehicule);
-        return new ResponseEntity<>(createdVehicule, HttpStatus.CREATED);
+        return new ResponseEntity<>(vehiculeService.toDTO(createdVehicule), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<Vehicule>> getAllVehicules() {
-        return ResponseEntity.ok(vehiculeService.retrieveAllVehicules());
+    public ResponseEntity<List<vehiculeDTO>> getAllVehicules() {
+        return ResponseEntity.ok(vehiculeService.retrieveAllVehicules().stream().map(vehiculeService::toDTO).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vehicule> getVehicule(@PathVariable Long id) {
-        return ResponseEntity.ok(vehiculeService.retrieveVehicule(id));
+    public ResponseEntity<vehiculeDTO> getVehicule(@PathVariable Long id) {
+        return ResponseEntity.ok(vehiculeService.toDTO(vehiculeService.retrieveVehicule(id)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Vehicule> updateVehicule(@PathVariable Long id, @RequestBody Vehicule vehicule) {
+    public ResponseEntity<vehiculeDTO> updateVehicule(@PathVariable Long id, @RequestBody Vehicule vehicule) {
         vehicule.setIdVehicule(id);
-        return ResponseEntity.ok(vehiculeService.updateVehicule(vehicule));
+        return ResponseEntity.ok(vehiculeService.toDTO(vehiculeService.updateVehicule(vehicule)));
     }
 
     @DeleteMapping("/{id}")
@@ -55,8 +57,54 @@ public class VehiculeResController {
         return ResponseEntity.noContent().build();
     }
 
+    // Lie un vehicule existant a une agence existante : PUT /api/vehicules/{idVehicule}/agence/{idAgence}
+    @PutMapping("/{idVehicule}/agence/{idAgence}")
+    public ResponseEntity<vehiculeDTO> assignVehiculeToAgence(@PathVariable Long idVehicule,
+                                                           @PathVariable Long idAgence) {
+        return ResponseEntity.ok(vehiculeService.toDTO(vehiculeService.assignVehiculeToAgence(idVehicule, idAgence)));
+    }
+
+    // Ajoute un equipement existant a un vehicule existant : PUT /api/vehicules/{idVehicule}/equipement/{idEquipement}
+    @PutMapping("/{idVehicule}/equipement/{idEquipement}")
+    public ResponseEntity<vehiculeDTO> assignEquipementToVehicule(@PathVariable Long idVehicule,
+                                                               @PathVariable Long idEquipement) {
+        return ResponseEntity.ok(vehiculeService.toDTO(vehiculeService.assignEquipementToVehicule(idVehicule, idEquipement)));
+    }
+
+    // Cree un vehicule + agence + equipements : POST /api/vehicules/agence/{idAgence}/equipements?idEquipements=1&idEquipements=2
+    @PostMapping("/agence/{idAgence}/equipements")
+    public ResponseEntity<vehiculeDTO> addVehiculeAndAssignEquipementsAndAgence(@PathVariable Long idAgence,
+                                                                             @RequestParam List<Long> idEquipements,
+                                                                             @RequestBody Vehicule vehicule) {
+        Vehicule created = vehiculeService.addVehiculeAndAssignEquipementsAndAgence(idAgence, idEquipements, vehicule);
+        return new ResponseEntity<>(vehiculeService.toDTO(created), HttpStatus.CREATED);
+    }
+
+    // Retire l'agence d'un vehicule : DELETE /api/vehicules/{idVehicule}/agence
+    @DeleteMapping("/{idVehicule}/agence")
+    public ResponseEntity<vehiculeDTO> unassignVehiculeFromAgence(@PathVariable Long idVehicule) {
+        return ResponseEntity.ok(vehiculeService.toDTO(vehiculeService.unassignVehiculeFromAgence(idVehicule)));
+    }
+
+    // Retire un equipement d'un vehicule : DELETE /api/vehicules/{idVehicule}/equipement/{idEquipement}
+    @DeleteMapping("/{idVehicule}/equipement/{idEquipement}")
+    public ResponseEntity<vehiculeDTO> unassignEquipementFromVehicule(@PathVariable Long idVehicule,
+                                                                   @PathVariable Long idEquipement) {
+        return ResponseEntity.ok(vehiculeService.toDTO(vehiculeService.unassignEquipementFromVehicule(idVehicule, idEquipement)));
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleNotFound(EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+
+    // Cree un vehicule et l'affecte a une agence : POST /api/vehicules/agence/{idAgence}
+    @PostMapping("/agence/{idAgence}")
+    public ResponseEntity<vehiculeDTO> addVehiculeAndAssignToAgence(@PathVariable Long idAgence,
+                                                                 @RequestBody Vehicule vehicule) {
+        Vehicule created = vehiculeService.addVehiculeAndAssignToAgence(idAgence, vehicule);
+        return new ResponseEntity<>(vehiculeService.toDTO(created), HttpStatus.CREATED);
+
     }
 }
